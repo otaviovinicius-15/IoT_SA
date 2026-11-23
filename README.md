@@ -5,7 +5,7 @@ Internet das Coisas
 ---
 
 ## 📊 Estrutura Organizacional
-![Estrutura Organizacional](pictures/Estrutura-Organizacional.png)
+![Estrutura Organizacional](/pictures/Estrutura-Organizacional.png)
 
 ---
 
