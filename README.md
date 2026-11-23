@@ -5,12 +5,12 @@ Internet das Coisas
 ---
 
 ## 📊 Estrutura Organizacional
-![Estrutura Organizacional](/pictures/Estrutura-Organizacional.png)
+![Estrutura Organizacional](pictures/Estrutura-Organizacional.png)
 
 ---
 
 ## 🧩 Business Model Canvas
-🔗 
+🔗 https://canva.link/jg32m8yajdrwedx
 
 ---
 
@@ -50,13 +50,24 @@ Gestão e Controle de Estoque
 
 ## ⚙️ Requisitos Funcionais
 
-
+- Autenticação.
+- Dashboard.
+- Histórico de Movimentações.
 
 ---
 
 ## 🛡️ Requisitos Não Funcionais
 
-
+- O sistema deverá proteger os dados e restringir o acesso conforme o perfil de cada usuário.
+- O sistema deverá processar as leituras RFID e registrar as movimentações rapidamente.
+- O sistema deverá estar disponível durante o horário de funcionamento da empresa.
+- A interface deverá ser simples, intuitiva e de fácil utilização.
+- O sistema deverá registrar corretamente as retiradas, devoluções e atualizações do estoque.
+- As informações armazenadas no banco de dados deverão ser consistentes e protegidas contra alterações indevidas.
+- O sistema web deverá funcionar nos principais navegadores.
+- O sistema deverá permitir futuras atualizações e melhorias.
+- O banco de dados deverá possuir cópias de segurança para evitar a perda de informações.
+- A comunicação entre ESP32, broker MQTT e sistema deverá ocorrer de forma estável e confiável.
 
 ---
 
