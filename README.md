@@ -5,7 +5,7 @@ Internet das Coisas
 ---
 
 ## 📊 Estrutura Organizacional
-![Estrutura Organizacional](pictures/Estrutura-Organizacional.png)
+![Estrutura Organizacional](./pictures/Estrutura-Organizacional.png)
 
 ---
 
@@ -67,7 +67,6 @@ Gestão e Controle de Estoque
 - O sistema web deverá funcionar nos principais navegadores.
 - O sistema deverá permitir futuras atualizações e melhorias.
 - O banco de dados deverá possuir cópias de segurança para evitar a perda de informações.
-- A comunicação entre ESP32, broker MQTT e sistema deverá ocorrer de forma estável e confiável.
 
 ---
 
