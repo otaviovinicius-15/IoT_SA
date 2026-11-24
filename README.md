@@ -71,4 +71,9 @@ Gestão e Controle de Estoque
 ---
 
 ## 📊 Modelagem Lógica Banco
-![Modelagem Lógica Banco]()
+![Modelagem Lógica Banco](./Pictures/banco.png)
+
+---
+
+## 📊 Diagrama de Atividade
+![Diagrama de Atividade](./Pictures/diagrama_de_atividade.png)
