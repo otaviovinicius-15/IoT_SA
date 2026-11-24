@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $host = "localhost";
-$banco = "";
+$banco = "controle_ferramentas";
 $usuario = "root";
 $senha = "";
 

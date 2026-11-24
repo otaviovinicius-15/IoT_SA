@@ -12,24 +12,6 @@ if (!isset($_SESSION['usuario_id'])) {
 $nome = $_SESSION['usuario_nome'];
 $perfil = $_SESSION['perfil'];
 
-// Consulta quantidade de ferramentas
-$sql = "SELECT COUNT(*) AS total FROM ferramentas";
-$stmt = $pdo->query($sql);
-$totalFerramentas = $stmt->fetch()['total'];
-
-// Consulta quantidade total disponível
-$sql = "SELECT COALESCE(SUM(quantidade_disponivel), 0) AS total
-        FROM ferramentas";
-$stmt = $pdo->query($sql);
-$totalDisponivel = $stmt->fetch()['total'];
-
-// Consulta quantidade emprestada
-$sql = "SELECT COALESCE(SUM(quantidade) - 
-        COALESCE((SELECT SUM(quantidade) FROM devolucoes), 0), 0) AS total
-        FROM emprestimos";
-$stmt = $pdo->query($sql);
-$totalEmprestado = $stmt->fetch()['total'];
-
 ?>
 
 <!DOCTYPE html>
@@ -183,7 +165,7 @@ $totalEmprestado = $stmt->fetch()['total'];
             Olá, <?= htmlspecialchars($nome) ?><br>
 
             Perfil:
-            <?= $perfil === 'SUPERVISOR' ? 'Supervisor de Manutenção' : 'Técnico de Ferramentaria' ?>
+            <?= $perfil === 'administrador' ? 'ADMINISTRADOR' : 'OPERADOR' ?>
 
             <br>
 
@@ -196,7 +178,7 @@ $totalEmprestado = $stmt->fetch()['total'];
         <a href="dashboard.php">Início</a>
         <a href="ferramentas.php">Ferramentas</a>
         <a href="movimentacoes.php">Movimentações</a>
-        <?php if ($_SESSION['perfil'] === 'SUPERVISOR'): ?>
+        <?php if ($_SESSION['perfil'] === 'administrador'): ?>
         <a href="usuarios.php">Usuários</a>
         <?php endif; ?>
     </nav>
