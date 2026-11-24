@@ -6,10 +6,11 @@ USE controle_ferramentas;
 CREATE TABLE usuarios (
   id     INT AUTO_INCREMENT PRIMARY KEY,
   nome   VARCHAR(100) NOT NULL,
-  login  VARCHAR(50)  NOT NULL UNIQUE,
+  email  VARCHAR(100)  NOT NULL UNIQUE,
   senha  VARCHAR(255) NOT NULL,                      -- guardar com password_hash()
   perfil ENUM('administrador','operador') NOT NULL DEFAULT 'operador',
-  ativo  BOOLEAN NOT NULL DEFAULT TRUE
+  ativo  BOOLEAN NOT NULL DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -18,7 +19,8 @@ CREATE TABLE funcionarios (
   nome        VARCHAR(100) NOT NULL,
   setor       VARCHAR(60)  NULL,
   cartao_rfid VARCHAR(50)  NOT NULL UNIQUE,
-  ativo       BOOLEAN NOT NULL DEFAULT TRUE
+  ativo       BOOLEAN NOT NULL DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE ferramentas (
@@ -26,7 +28,8 @@ CREATE TABLE ferramentas (
   nome                  VARCHAR(100) NOT NULL,
   quantidade_disponivel INT NOT NULL DEFAULT 0,
   estoque_minimo        INT NOT NULL DEFAULT 1,
-  ativo                 BOOLEAN NOT NULL DEFAULT TRUE
+  ativo                 BOOLEAN NOT NULL DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -41,5 +44,5 @@ CREATE TABLE movimentacoes (
   FOREIGN KEY (ferramenta_id)  REFERENCES ferramentas(id)
 );
 
-INSERT INTO usuarios (nome, login, senha, perfil)
-VALUES ('Administrador', 'admin', '$2y$10$IvZuI5SCMfDlUhOaTvQbL.BWo9TFnVIt4wp.kXYrQ0Aw6Aib3LBgO', 'administrador');
+INSERT INTO usuarios (nome, email, senha, perfil)
+VALUES ('Administrador', 'admin@email.com', '$2y$10$IvZuI5SCMfDlUhOaTvQbL.BWo9TFnVIt4wp.kXYrQ0Aw6Aib3LBgO', 'administrador');
