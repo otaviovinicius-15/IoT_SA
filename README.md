@@ -19,7 +19,7 @@ Internet das Coisas
 Gestão e Controle de Estoque 
 
 ---
-s
+
 ## ⚠️ Problema
 
 - A falta de um sistema automatizado e seguro para o controle de retirada e devolução de ferramentas especiais pode ocasionar perdas, extravios, acessos não autorizados e dificuldades na identificação dos responsáveis por cada movimentação.
