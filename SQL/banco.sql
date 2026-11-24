@@ -30,7 +30,7 @@ CREATE TABLE ferramentas (
 );
 
 
-CREATE TABLE retiradas (
+CREATE TABLE movimentacoes (
   id              INT AUTO_INCREMENT PRIMARY KEY,
   funcionario_id  INT NOT NULL,
   ferramenta_id   INT NOT NULL,
@@ -42,4 +42,4 @@ CREATE TABLE retiradas (
 );
 
 INSERT INTO usuarios (nome, login, senha, perfil)
-VALUES ('Administrador', 'admin', 'TROCAR_POR_HASH', 'administrador');
+VALUES ('Administrador', 'admin', '$2y$10$IvZuI5SCMfDlUhOaTvQbL.BWo9TFnVIt4wp.kXYrQ0Aw6Aib3LBgO', 'administrador');
