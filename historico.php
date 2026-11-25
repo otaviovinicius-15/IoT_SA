@@ -286,6 +286,7 @@ function formatarData($data)
         <a href="ferramentas.php">Ferramentas</a>
         <a href="historico.php">Movimentações</a>
         <?php if ($ehAdmin): ?>
+        <a href="funcionarios.php">Funcionários</a>
         <a href="usuarios.php">Usuários</a>
         <?php endif; ?>
     </nav>
