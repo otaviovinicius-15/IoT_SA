@@ -1,0 +1,4 @@
+ArduinoJson
+MFRC522
+Adafruit GFX Library
+Adafruit SSD1306

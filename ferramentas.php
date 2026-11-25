@@ -316,6 +316,7 @@ $ferramentas = $pdo->query("SELECT * FROM ferramentas ORDER BY ativo DESC, nome"
 
     <nav>
         <a href="dashboard.php">Início</a>
+        <a href="retirada.php">Retirada</a>
         <a href="ferramentas.php">Ferramentas</a>
         <a href="historico.php">Movimentações</a>
         <?php if ($ehAdmin): ?>
