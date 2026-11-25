@@ -12,6 +12,36 @@ if (!isset($_SESSION['usuario_id'])) {
 $nome = $_SESSION['usuario_nome'];
 $perfil = $_SESSION['perfil'];
 
+// ===== Números dos cards =====
+
+
+$totalFerramentas = $pdo->query("SELECT COUNT(*) FROM ferramentas WHERE ativo = 1")->fetchColumn();
+
+
+$totalDisponivel = $pdo->query("SELECT COALESCE(SUM(quantidade_disponivel), 0) FROM ferramentas WHERE ativo = 1")->fetchColumn();
+
+
+$totalEmprestado = $pdo->query("SELECT COUNT(*) FROM movimentacoes WHERE data_devolucao IS NULL")->fetchColumn();
+
+
+$estoqueBaixo = $pdo->query("
+    SELECT nome, quantidade_disponivel, estoque_minimo
+    FROM ferramentas
+    WHERE ativo = 1 AND quantidade_disponivel <= estoque_minimo
+    ORDER BY nome
+")->fetchAll();
+
+
+$atrasadas = $pdo->query("
+    SELECT f.nome AS funcionario, f.setor, fe.nome AS ferramenta,
+           m.data_retirada, m.prazo_devolucao
+    FROM movimentacoes m
+    JOIN funcionarios f  ON f.id  = m.funcionario_id
+    JOIN ferramentas  fe ON fe.id = m.ferramenta_id
+    WHERE m.data_devolucao IS NULL AND m.prazo_devolucao < NOW()
+    ORDER BY m.prazo_devolucao
+")->fetchAll();
+
 ?>
 
 <!DOCTYPE html>
@@ -133,6 +163,44 @@ $perfil = $_SESSION['perfil'];
             background-color: #244565;
         }
 
+        .alerta {
+            margin-top: 30px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 5px solid #e67e22;
+            overflow-x: auto;
+        }
+
+        .alerta.vermelho {
+            border-left-color: #c0392b;
+        }
+
+        .alerta h3 {
+            margin-top: 0;
+        }
+
+        .ok {
+            color: #27ae60;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #e3e6ea;
+        }
+
+        th {
+            background-color: #f5f7fa;
+            color: #555;
+        }
+
         @media (max-width: 600px) {
             header {
                 flex-direction: column;
@@ -209,6 +277,58 @@ $perfil = $_SESSION['perfil'];
 
         </div>
 
+        
+        <div class="alerta">
+            <h3>⚠ Estoque abaixo do mínimo</h3>
+
+            <?php if (count($estoqueBaixo) === 0): ?>
+                <p class="ok">Nenhuma ferramenta abaixo do estoque mínimo.</p>
+            <?php else: ?>
+                <table>
+                    <tr>
+                        <th>Ferramenta</th>
+                        <th>Disponível</th>
+                        <th>Mínimo</th>
+                    </tr>
+                    <?php foreach ($estoqueBaixo as $item): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($item['nome']) ?></td>
+                        <td><?= $item['quantidade_disponivel'] ?></td>
+                        <td><?= $item['estoque_minimo'] ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </table>
+            <?php endif; ?>
+        </div>
+
+        
+        <div class="alerta vermelho">
+            <h3>⏰ Devoluções atrasadas</h3>
+
+            <?php if (count($atrasadas) === 0): ?>
+                <p class="ok">Nenhuma ferramenta em atraso.</p>
+            <?php else: ?>
+                <table>
+                    <tr>
+                        <th>Funcionário</th>
+                        <th>Setor</th>
+                        <th>Ferramenta</th>
+                        <th>Retirada</th>
+                        <th>Prazo</th>
+                    </tr>
+                    <?php foreach ($atrasadas as $item): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($item['funcionario']) ?></td>
+                        <td><?= htmlspecialchars($item['setor'] ?? '-') ?></td>
+                        <td><?= htmlspecialchars($item['ferramenta']) ?></td>
+                        <td><?= date('d/m/Y H:i', strtotime($item['data_retirada'])) ?></td>
+                        <td><?= date('d/m/Y H:i', strtotime($item['prazo_devolucao'])) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </table>
+            <?php endif; ?>
+        </div>
+
         <div class="atalhos">
 
             <h3>Acesso rápido</h3>
@@ -217,7 +337,9 @@ $perfil = $_SESSION['perfil'];
 
             <a href="movimentacoes.php">Registrar movimentação</a>
 
+            <?php if ($perfil === 'administrador'): ?>
             <a href="usuarios.php">Gerenciar usuários</a>
+            <?php endif; ?>
 
         </div>
 
