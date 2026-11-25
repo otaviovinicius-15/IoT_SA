@@ -8,7 +8,7 @@ CREATE TABLE usuarios (
   nome   VARCHAR(100) NOT NULL,
   email  VARCHAR(100)  NOT NULL UNIQUE,
   senha  VARCHAR(255) NOT NULL,                      -- guardar com password_hash()
-  perfil ENUM('administrador','operador') NOT NULL DEFAULT 'operador',
+  perfil ENUM('administrador','supervisor') NOT NULL DEFAULT 'supervisor',
   ativo  BOOLEAN NOT NULL DEFAULT TRUE,
   criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -261,7 +261,7 @@ $atrasadas = $pdo->query("
             Olá, <?= htmlspecialchars($nome) ?><br>
 
             Perfil:
-            <?= $perfil === 'administrador' ? 'ADMINISTRADOR' : 'OPERADOR' ?>
+            <?= $perfil === 'administrador' ? 'ADMINISTRADOR' : 'SUPERVISOR' ?>
 
             <br>
 
