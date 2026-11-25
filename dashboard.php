@@ -163,17 +163,45 @@ $atrasadas = $pdo->query("
             background-color: #244565;
         }
 
-        .alerta {
+        .alertas {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
             margin-top: 30px;
+        }
+
+        .alerta {
             background-color: white;
             padding: 25px;
             border-radius: 8px;
+            min-width: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             border-left: 5px solid #e67e22;
             overflow-x: auto;
         }
 
         .alerta.vermelho {
             border-left-color: #c0392b;
+        }
+
+        .alerta h3 {
+             margin-top: 0;
+            color: #555;
+            font-size: 15px;
+        }
+
+        .alerta p {
+            margin-bottom: 0;
+        }
+
+        .ok {
+            color: #27ae60;
+        }
+
+        @media (max-width: 600px) {
+            .alertas {
+                grid-template-columns: 1fr;
+            }
         }
 
         .alerta h3 {
@@ -278,56 +306,86 @@ $atrasadas = $pdo->query("
         </div>
 
         
-        <div class="alerta">
-            <h3>⚠ Estoque abaixo do mínimo</h3>
+        <div class="alertas">
 
-            <?php if (count($estoqueBaixo) === 0): ?>
-                <p class="ok">Nenhuma ferramenta abaixo do estoque mínimo.</p>
-            <?php else: ?>
-                <table>
-                    <tr>
-                        <th>Ferramenta</th>
-                        <th>Disponível</th>
-                        <th>Mínimo</th>
-                    </tr>
-                    <?php foreach ($estoqueBaixo as $item): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($item['nome']) ?></td>
-                        <td><?= $item['quantidade_disponivel'] ?></td>
-                        <td><?= $item['estoque_minimo'] ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </table>
-            <?php endif; ?>
-        </div>
+    <!-- ESTOQUE ABAIXO DO MÍNIMO -->
+    <div class="alerta">
 
-        
-        <div class="alerta vermelho">
-            <h3>⏰ Devoluções atrasadas</h3>
+        <h3>⚠ Estoque abaixo do mínimo</h3>
 
-            <?php if (count($atrasadas) === 0): ?>
-                <p class="ok">Nenhuma ferramenta em atraso.</p>
-            <?php else: ?>
-                <table>
-                    <tr>
-                        <th>Funcionário</th>
-                        <th>Setor</th>
-                        <th>Ferramenta</th>
-                        <th>Retirada</th>
-                        <th>Prazo</th>
-                    </tr>
-                    <?php foreach ($atrasadas as $item): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($item['funcionario']) ?></td>
-                        <td><?= htmlspecialchars($item['setor'] ?? '-') ?></td>
-                        <td><?= htmlspecialchars($item['ferramenta']) ?></td>
-                        <td><?= date('d/m/Y H:i', strtotime($item['data_retirada'])) ?></td>
-                        <td><?= date('d/m/Y H:i', strtotime($item['prazo_devolucao'])) ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </table>
-            <?php endif; ?>
-        </div>
+        <?php if (count($estoqueBaixo) === 0): ?>
+
+            <p class="ok">
+                Nenhuma ferramenta abaixo do estoque mínimo.
+            </p>
+
+        <?php else: ?>
+
+            <table>
+                <tr>
+                    <th>Ferramenta</th>
+                    <th>Disponível</th>
+                    <th>Mínimo</th>
+                </tr>
+
+                <?php foreach ($estoqueBaixo as $item): ?>
+                <tr>
+                    <td><?= htmlspecialchars($item['nome']) ?></td>
+                    <td><?= $item['quantidade_disponivel'] ?></td>
+                    <td><?= $item['estoque_minimo'] ?></td>
+                </tr>
+                <?php endforeach; ?>
+
+            </table>
+
+        <?php endif; ?>
+
+    </div>
+
+
+    <!-- DEVOLUÇÕES ATRASADAS -->
+    <div class="alerta vermelho">
+
+        <h3>⏰ Devoluções atrasadas</h3>
+
+        <?php if (count($atrasadas) === 0): ?>
+
+            <p class="ok">
+                Nenhuma ferramenta em atraso.
+            </p>
+
+        <?php else: ?>
+
+            <table>
+                <tr>
+                    <th>Funcionário</th>
+                    <th>Setor</th>
+                    <th>Ferramenta</th>
+                    <th>Retirada</th>
+                    <th>Prazo</th>
+                </tr>
+
+                <?php foreach ($atrasadas as $item): ?>
+                <tr>
+                    <td><?= htmlspecialchars($item['funcionario']) ?></td>
+                    <td><?= htmlspecialchars($item['setor'] ?? '-') ?></td>
+                    <td><?= htmlspecialchars($item['ferramenta']) ?></td>
+                    <td>
+                        <?= date('d/m/Y H:i', strtotime($item['data_retirada'])) ?>
+                    </td>
+                    <td>
+                        <?= date('d/m/Y H:i', strtotime($item['prazo_devolucao'])) ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+
+            </table>
+
+        <?php endif; ?>
+
+    </div>
+
+
 
         <div class="atalhos">
 
