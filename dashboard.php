@@ -273,7 +273,7 @@ $atrasadas = $pdo->query("
     <nav>
         <a href="dashboard.php">Início</a>
         <a href="ferramentas.php">Ferramentas</a>
-        <a href="movimentacoes.php">Movimentações</a>
+        <a href="historico.php">Movimentações</a>
         <?php if ($_SESSION['perfil'] === 'administrador'): ?>
         <a href="funcionarios.php">Funcionários</a>
         <a href="usuarios.php">Usuários</a>
@@ -394,7 +394,7 @@ $atrasadas = $pdo->query("
 
             <a href="ferramentas.php">Consultar ferramentas</a>
 
-            <a href="movimentacoes.php">Registrar movimentação</a>
+            <a href="historico.php">Histórico de movimentações</a>
 
             <?php if ($perfil === 'administrador'): ?>
             <a href="usuarios.php">Gerenciar usuários</a>
