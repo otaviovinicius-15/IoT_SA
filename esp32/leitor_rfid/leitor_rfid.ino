@@ -1,5 +1,6 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
 #include <SPI.h>
 #include <MFRC522.h>
@@ -10,7 +11,11 @@
 const char* WIFI_SSID  = "Wokwi-GUEST";
 const char* WIFI_SENHA = "";
 
-const char* URL_API = "http://192.168.0.10/IoT_SA/api/rfid.php";
+const char* URL_API = "https://SEU-ENDERECO.trycloudflare.com/IoT_SA/api/armario.php";
+
+#define ARMARIO_ID 1        // código do armário (ver página Armários)
+#define TRAVA_PIN  5        // relé/LED da fechadura
+#define TEMPO_ABERTO 5000   // ms que a fechadura fica liberada
 
 #define RFID_SS   0
 #define RFID_RST  4
@@ -61,14 +66,24 @@ String lerCodigo() {
   return codigo;
 }
 
+void abrirArmario() {
+  digitalWrite(TRAVA_PIN, HIGH);
+  delay(TEMPO_ABERTO);
+  digitalWrite(TRAVA_PIN, LOW);
+}
+
 void consultarApi(String codigo) {
+  WiFiClientSecure cliente;
+  cliente.setInsecure();
+
   HTTPClient http;
-  http.begin(String(URL_API) + "?codigo=" + codigo);
+  http.begin(cliente, String(URL_API) + "?codigo=" + codigo + "&armario=" + ARMARIO_ID);
+  http.addHeader("ngrok-skip-browser-warning", "1");
 
   int status = http.GET();
 
   if (status != 200) {
-    Serial.println("Erro na API: " + String(status));
+    Serial.println("Erro na API: " + String(status) + " " + http.errorToString(status));
     mostrar("Cartao: " + codigo, "Erro no servidor");
     http.end();
     return;
@@ -79,14 +94,22 @@ void consultarApi(String codigo) {
   Serial.println("Resposta: " + resposta);
 
   JsonDocument json;
-  deserializeJson(json, resposta);
 
-  bool autorizado  = json["autorizado"];
-  String nome      = json["nome"] | "";
-  String mensagem  = json["mensagem"] | "";
+  if (deserializeJson(json, resposta)) {
+    mostrar("Cartao: " + codigo, "Resposta invalida");
+    return;
+  }
 
-  if (autorizado) {
-    mostrar("AUTORIZADO", nome, mensagem);
+  bool abrir        = json["abrir"] | false;
+  String nome       = json["nome"] | "";
+  String ferramenta = json["ferramenta"] | "";
+  String prazo      = json["prazo"] | "";
+  String mensagem   = json["mensagem"] | "";
+
+  // Só abre com autorização válida do sistema WEB
+  if (abrir) {
+    mostrar("LIBERADO - " + nome, ferramenta, "Devolver: " + prazo);
+    abrirArmario();
   } else {
     mostrar("NEGADO", "Cartao: " + codigo, mensagem);
   }
@@ -95,6 +118,9 @@ void consultarApi(String codigo) {
 void setup() {
   Serial.begin(115200);
 
+  pinMode(TRAVA_PIN, OUTPUT);
+  digitalWrite(TRAVA_PIN, LOW);
+
   Wire.begin(OLED_SDA, OLED_SCL);
   tela.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 
@@ -102,7 +128,7 @@ void setup() {
   rfid.PCD_Init();
 
   conectarWiFi();
-  mostrar("Ferramentaria", "Aproxime o cartao");
+  mostrar("Armario " + String(ARMARIO_ID), "Aproxime o cartao");
 }
 
 void loop() {
@@ -123,5 +149,5 @@ void loop() {
   rfid.PICC_HaltA();
 
   delay(3000);
-  mostrar("Ferramentaria", "Aproxime o cartao");
+  mostrar("Armario " + String(ARMARIO_ID), "Aproxime o cartao");
 }

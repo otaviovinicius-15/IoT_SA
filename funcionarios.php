@@ -408,7 +408,7 @@ $funcionarios = $pdo->query("
     <nav>
 
         <a href="dashboard.php">Início</a>
-        <a href="retirada.php">Retirada</a>
+        <a href="armarios.php">Armários</a>
         <a href="ferramentas.php">Ferramentas</a>
         <a href="historico.php">Movimentações</a>
 
