@@ -368,7 +368,7 @@ $usuarios = $pdo->query("SELECT id, nome, email, perfil, ativo FROM usuarios ORD
 
     <nav>
         <a href="dashboard.php">Início</a>
-        <a href="retirada.php">Retirada</a>
+        <a href="armarios.php">Armários</a>
         <a href="ferramentas.php">Ferramentas</a>
         <a href="historico.php">Movimentações</a>
         <a href="funcionarios.php">Funcionários</a>
