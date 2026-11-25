@@ -46,3 +46,14 @@ CREATE TABLE movimentacoes (
 
 INSERT INTO usuarios (nome, email, senha, perfil)
 VALUES ('Administrador', 'admin@email.com', '$2y$10$IvZuI5SCMfDlUhOaTvQbL.BWo9TFnVIt4wp.kXYrQ0Aw6Aib3LBgO', 'administrador');
+
+INSERT INTO funcionarios (nome, setor, cartao_rfid) VALUES
+('João Silva',     'Manutenção', '1001'),
+('Maria Souza',    'Produção',   '1002'),
+('Carlos Pereira', 'Elétrica',   '1003');
+
+INSERT INTO ferramentas (nome, quantidade_disponivel, estoque_minimo) VALUES
+('Furadeira',         4, 2),
+('Torquímetro',       2, 1),
+('Multímetro',        3, 1),
+('Chave de impacto',  1, 1);
