@@ -409,7 +409,7 @@ $funcionarios = $pdo->query("
 
         <a href="dashboard.php">Início</a>
         <a href="ferramentas.php">Ferramentas</a>
-        <a href="movimentacoes.php">Movimentações</a>
+        <a href="historico.php">Movimentações</a>
 
         <?php if ($ehAdmin): ?>
             <a href="funcionarios.php">Funcionários</a>
