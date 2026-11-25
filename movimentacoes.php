@@ -374,6 +374,7 @@ $prazoPadrao = date('Y-m-d\TH:i', strtotime('+1 day'));
         <a href="ferramentas.php">Ferramentas</a>
         <a href="movimentacoes.php">Movimentações</a>
         <?php if ($ehAdmin): ?>
+        <a href="funcionarios.php">Funcionários</a>
         <a href="usuarios.php">Usuários</a>
         <?php endif; ?>
     </nav>

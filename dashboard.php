@@ -275,6 +275,7 @@ $atrasadas = $pdo->query("
         <a href="ferramentas.php">Ferramentas</a>
         <a href="movimentacoes.php">Movimentações</a>
         <?php if ($_SESSION['perfil'] === 'administrador'): ?>
+        <a href="funcionarios.php">Funcionários</a>
         <a href="usuarios.php">Usuários</a>
         <?php endif; ?>
     </nav>
