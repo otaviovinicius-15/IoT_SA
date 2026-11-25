@@ -309,7 +309,7 @@ $ferramentas = $pdo->query("SELECT * FROM ferramentas ORDER BY ativo DESC, nome"
 
         <div class="usuario">
             Olá, <?= htmlspecialchars($nome) ?><br>
-            Perfil: <?= $ehAdmin ? 'ADMINISTRADOR' : 'OPERADOR' ?><br>
+            Perfil: <?= strtoupper($perfil) ?><br>
             <a href="sair.php">Sair do sistema</a>
         </div>
     </header>
@@ -317,7 +317,7 @@ $ferramentas = $pdo->query("SELECT * FROM ferramentas ORDER BY ativo DESC, nome"
     <nav>
         <a href="dashboard.php">Início</a>
         <a href="ferramentas.php">Ferramentas</a>
-        <a href="movimentacoes.php">Movimentações</a>
+        <a href="historico.php">Movimentações</a>
         <?php if ($ehAdmin): ?>
         <a href="usuarios.php">Usuários</a>
         <?php endif; ?>
