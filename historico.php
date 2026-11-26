@@ -11,7 +11,38 @@ $nome    = $_SESSION['usuario_nome'];
 $perfil  = $_SESSION['perfil'];
 $ehAdmin = $perfil === 'administrador';
 
+$sucesso = isset($_GET['devolvida']) ? 'Devolução registrada com sucesso.' : '';
+
+// ===== REGISTRAR DEVOLUÇÃO =====
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['acao'] ?? '') === 'devolver') {
+
+    $stmt = $pdo->prepare("SELECT * FROM movimentacoes WHERE id = ? AND data_devolucao IS NULL");
+    $stmt->execute([(int) ($_POST['id'] ?? 0)]);
+    $mov = $stmt->fetch();
+
+    if ($mov) {
+        $pdo->beginTransaction();
+
+        $pdo->prepare("UPDATE movimentacoes SET data_devolucao = NOW() WHERE id = ?")
+            ->execute([$mov['id']]);
+
+        $pdo->prepare("UPDATE ferramentas SET quantidade_disponivel = quantidade_disponivel + ? WHERE id = ?")
+            ->execute([$mov['quantidade'], $mov['ferramenta_id']]);
+
+        // Volta para o armário de origem, se a ferramenta ainda estiver vinculada a ele
+        $pdo->prepare("UPDATE armario_ferramentas SET quantidade = quantidade + ? WHERE armario_id = ? AND ferramenta_id = ?")
+            ->execute([$mov['quantidade'], $mov['armario_id'], $mov['ferramenta_id']]);
+
+        $pdo->commit();
+    }
+
+    header("Location: historico.php?devolvida=1");
+    exit;
+}
+
 $filtro = [
+    'armario_id'     => (int) ($_GET['armario_id'] ?? 0),
     'funcionario_id' => (int) ($_GET['funcionario_id'] ?? 0),
     'ferramenta_id'  => (int) ($_GET['ferramenta_id'] ?? 0),
     'data_inicio'    => $_GET['data_inicio'] ?? '',
@@ -21,6 +52,11 @@ $filtro = [
 
 $condicoes = [];
 $parametros = [];
+
+if ($filtro['armario_id']) {
+    $condicoes[] = "m.armario_id = ?";
+    $parametros[] = $filtro['armario_id'];
+}
 
 if ($filtro['funcionario_id']) {
     $condicoes[] = "m.funcionario_id = ?";
@@ -55,11 +91,12 @@ if (isset($situacoes[$filtro['situacao']])) {
 $where = $condicoes ? "WHERE " . implode(" AND ", $condicoes) : "";
 
 $stmt = $pdo->prepare("
-    SELECT f.nome AS funcionario, f.setor, fe.nome AS ferramenta,
-           m.data_retirada, m.prazo_devolucao, m.data_devolucao
+    SELECT m.id, a.nome AS armario, f.nome AS funcionario, f.setor, fe.nome AS ferramenta,
+           m.quantidade, m.data_retirada, m.prazo_devolucao, m.data_devolucao
     FROM movimentacoes m
     JOIN funcionarios f  ON f.id  = m.funcionario_id
     JOIN ferramentas  fe ON fe.id = m.ferramenta_id
+    LEFT JOIN armarios a ON a.id  = m.armario_id
     $where
     ORDER BY m.data_retirada DESC
 ");
@@ -68,6 +105,7 @@ $movimentacoes = $stmt->fetchAll();
 
 $funcionarios = $pdo->query("SELECT id, nome FROM funcionarios ORDER BY nome")->fetchAll();
 $ferramentas  = $pdo->query("SELECT id, nome FROM ferramentas ORDER BY nome")->fetchAll();
+$armarios     = $pdo->query("SELECT id, nome FROM armarios ORDER BY nome")->fetchAll();
 
 function formatarData($data)
 {
@@ -203,6 +241,23 @@ function formatarData($data)
             background-color: #888;
         }
 
+        .botao.verde {
+            background-color: #27ae60;
+        }
+
+        .botao.pequeno {
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+
+        .mensagem {
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background-color: #e6f6ec;
+            color: #1e7e45;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -283,6 +338,7 @@ function formatarData($data)
 
     <nav>
         <a href="dashboard.php">Início</a>
+        <a href="armarios.php">Armários</a>
         <a href="ferramentas.php">Ferramentas</a>
         <a href="historico.php">Movimentações</a>
         <?php if ($ehAdmin): ?>
@@ -294,11 +350,27 @@ function formatarData($data)
     <main>
         <h2 class="titulo">Histórico de Movimentações</h2>
 
+        <?php if ($sucesso): ?>
+            <div class="mensagem"><?= $sucesso ?></div>
+        <?php endif; ?>
+
         <div class="caixa">
             <h3>Filtros</h3>
 
             <form method="GET" action="historico.php">
                 <div class="campos">
+                    <div class="campo">
+                        <label for="armario">Armário</label>
+                        <select id="armario" name="armario_id">
+                            <option value="">Todos</option>
+                            <?php foreach ($armarios as $a): ?>
+                            <option value="<?= $a['id'] ?>" <?= $filtro['armario_id'] == $a['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($a['nome']) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
                     <div class="campo">
                         <label for="funcionario">Funcionário</label>
                         <select id="funcionario" name="funcionario_id">
@@ -358,30 +430,49 @@ function formatarData($data)
             <?php if (count($movimentacoes) > 0): ?>
                 <table>
                     <tr>
+                        <th>Armário</th>
                         <th>Funcionário</th>
                         <th>Setor</th>
                         <th>Ferramenta</th>
+                        <th>Qtd.</th>
                         <th>Retirada</th>
                         <th>Prazo</th>
                         <th>Devolução</th>
                         <th>Situação</th>
+                        <th></th>
                     </tr>
 
                     <?php foreach ($movimentacoes as $m): ?>
                     <tr>
+                        <td><?= htmlspecialchars($m['armario'] ?? '-') ?></td>
                         <td><?= htmlspecialchars($m['funcionario']) ?></td>
                         <td><?= htmlspecialchars($m['setor'] ?? '-') ?></td>
                         <td><?= htmlspecialchars($m['ferramenta']) ?></td>
+                        <td><?= $m['quantidade'] ?></td>
                         <td><?= formatarData($m['data_retirada']) ?></td>
                         <td><?= formatarData($m['prazo_devolucao']) ?></td>
                         <td><?= formatarData($m['data_devolucao']) ?></td>
                         <td>
                             <?php if ($m['data_devolucao']): ?>
-                                <span class="etiqueta devolvida">Devolvida</span>
+                                <?php if ($m['data_devolucao'] > $m['prazo_devolucao']): ?>
+                                    <span class="etiqueta atrasada">Devolvida com atraso</span>
+                                <?php else: ?>
+                                    <span class="etiqueta devolvida">Devolvida no prazo</span>
+                                <?php endif; ?>
                             <?php elseif (strtotime($m['prazo_devolucao']) < time()): ?>
                                 <span class="etiqueta atrasada">Atrasada</span>
                             <?php else: ?>
                                 <span class="etiqueta aberto">Em aberto</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if (!$m['data_devolucao']): ?>
+                            <form method="POST" action="historico.php">
+                                <input type="hidden" name="acao" value="devolver">
+                                <input type="hidden" name="id" value="<?= $m['id'] ?>">
+                                <button type="submit" class="botao pequeno verde"
+                                        onclick="return confirm('Registrar devolução?')">Devolver</button>
+                            </form>
                             <?php endif; ?>
                         </td>
                     </tr>

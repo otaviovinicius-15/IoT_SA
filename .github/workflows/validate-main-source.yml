@@ -1,0 +1,19 @@
+name: Validar origem do PR para MAIN
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-source:
+    name: Validar branch DEV
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar origem
+        run: |
+          if [ "${{ github.head_ref }}" != "DEV" ]; then
+            echo "ERRO: Somente a branch DEV pode enviar PR para MAIN."
+            exit 1
+          fi
+          echo "Origem validada com sucesso!"
