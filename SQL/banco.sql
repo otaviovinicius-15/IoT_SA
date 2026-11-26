@@ -97,3 +97,14 @@ INSERT INTO ferramentas (nome, quantidade_disponivel, estoque_minimo) VALUES
 ('Torquímetro',       2, 1),
 ('Multímetro',        3, 1),
 ('Chave de impacto',  1, 1);
+-- Armário 1 de exemplo (é o ARMARIO_ID 1 do sketch do ESP32)
+INSERT INTO armarios (nome) VALUES ('Armário 1');
+
+INSERT INTO armario_funcionarios (armario_id, funcionario_id) VALUES
+(1, 1), (1, 2), (1, 3);
+
+INSERT INTO armario_ferramentas (armario_id, ferramenta_id, quantidade, prazo_dias) VALUES
+(1, 1, 2, 1),
+(1, 2, 2, 1),
+(1, 3, 2, 1),
+(1, 4, 1, 1);
