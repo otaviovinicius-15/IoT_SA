@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $ehAdmin) {
 
         $nomeFuncionario = trim($_POST['nome'] ?? '');
         $setor           = trim($_POST['setor'] ?? '');
-        $cartao          = trim($_POST['cartao_rfid'] ?? '');
+        $cartao = strtoupper(trim($_POST['cartao_rfid'] ?? ''));
 
         if ($nomeFuncionario === '') {
             $erro = "Informe o nome do funcionário.";
